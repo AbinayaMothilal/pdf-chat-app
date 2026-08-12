@@ -15,13 +15,14 @@ router.post("/upload", upload.single("pdf"), async (req, res) => {
       });
     }
 
-    const text = await pdfService.extractTextFromPDF(req.file.path);
+    const result = await pdfService.extractTextFromPDF(req.file.path);
 
     res.status(200).json({
       success: true,
       message: "File uploaded successfully",
-      characters: text.length,
-      text: text,
+      characters: result.text.length,
+      totalChunks: result.chunks.length,
+      // chunks: result.chunks,
     });
   } catch (error) {
     console.error("Upload/PDF extraction error:", error);

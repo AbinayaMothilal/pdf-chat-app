@@ -2,6 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const pdfParse = require("pdf-parse-fork");
 
+const { storeChunks } = require("./storeChunksService");
+
 // Extract Text from PDF file
 const extractTextFromPDF = async (filePath) => {
   try {
@@ -12,7 +14,12 @@ const extractTextFromPDF = async (filePath) => {
     // Chunk the text into smaller parts
     const chunks = chunkText(data.text, 500);
     console.log("Text chunking done, chunks:", chunks.length);
-    return { chunks: chunks, text: data.text };
+    const storedChunks = await storeChunks(chunks);
+    console.log("Stored chunks:", storedChunks);
+    return {
+      chunks: storedChunks,
+      chunksCount: storedChunks.length,
+    };
   } catch (error) {
     console.error("Error extracting text from PDF:", error);
     throw error;

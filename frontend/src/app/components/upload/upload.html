@@ -1,0 +1,112 @@
+<div class="upload-container">
+
+  @if (!uploadedFile) {
+
+  <div class="upload-content">
+
+    <div class="upload-icon">
+      📄
+    </div>
+
+    <h2>Upload a PDF</h2>
+
+    <p>
+      Upload a document to start asking questions
+    </p>
+
+    <label class="file-dropzone">
+
+      <input type="file" accept="application/pdf" hidden (change)="onFileSelected($event)" />
+
+      <span class="drop-icon">↑</span>
+
+      <strong>Choose PDF file</strong>
+
+      <span>
+        PDF files only
+      </span>
+
+    </label>
+
+    @if (fileUploadError) {
+    <p class="file-upload-error">
+      PDF files only allowed to upload
+    </p>
+    }
+
+
+    <button type="button" class="upload-btn" [disabled]="!selectedFile || pdfUploading" (click)="uploadPdf()">
+
+      @if (pdfUploading) {
+      <span>Uploading...</span>
+      } @else {
+      <span>Upload PDF</span>
+      }
+
+    </button>
+
+  </div>
+
+  }
+  @if(uploadedFile) {
+
+  <div class="pdf-viewer">
+
+    <!-- PDF Header -->
+
+    <div class="pdf-toolbar">
+
+      <div class="pdf-info">
+
+        <div class="pdf-icon">
+          📄
+        </div>
+
+        <div class="pdf-details">
+
+          <strong>
+            {{ selectedFile?.name }}
+          </strong>
+
+          <span>
+            PDF Document
+          </span>
+
+        </div>
+
+      </div>
+
+      <button type="button" class="remove-btn" (click)="removePdf()" title="Remove PDF">
+        ×
+      </button>
+
+    </div>
+
+
+    <!-- Uploaded PDF Card -->
+
+    <div class="pdf-content">
+
+      <div class="uploaded-pdf-card">
+
+        <div class="large-pdf-icon">
+          📄
+        </div>
+
+        <strong>
+          {{ selectedFile?.name }}
+        </strong>
+
+        <span>
+          {{responseMessage}}
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  }
+
+</div>

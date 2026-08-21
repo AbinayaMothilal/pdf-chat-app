@@ -1,0 +1,110 @@
+<div class="chat-container">
+
+  <!-- Chat Header -->
+  <div class="chat-header">
+
+    <div class="chat-title">
+
+      <div class="chat-icon">
+        ✨
+      </div>
+
+      <div>
+        <h3>PDF Assistant</h3>
+        <span>Ask questions about your document</span>
+      </div>
+
+    </div>
+
+    <div class="chat-status" [ngClass]="{
+        'ready': pdfUpload,
+        'disabled': !pdfUpload
+      }">
+
+      <span class="status-dot"></span>
+
+      {{ pdfUpload() ? 'Ready' : 'Upload PDF' }}
+
+    </div>
+
+  </div>
+
+
+  <!-- Chat Body -->
+  <div class="chat-body" [class.chat-disabled]="!pdfUpload()">
+
+    <!-- Chat Messages -->
+    <div class="messages">
+      <!-- Empty Chat State -->
+      <div class="empty-chat">
+        <div class="empty-chat-icon">
+          ✨
+        </div>
+        <h3>
+          @if (pdfUpload()) {
+          Ask about your PDF
+          } @else {
+          Upload a PDF to start
+          }
+        </h3>
+        <p>
+          @if (pdfUpload()) {
+          Ask questions about the uploaded document
+          and I'll help you find the answers.
+          } @else {
+          Upload a PDF first, then you can ask questions
+          about its content.
+          }
+        </p>
+        <!-- Suggested Questions -->
+        <div class="suggestions">
+
+          <button type="button" [disabled]="!pdfUpload()">
+
+            <span>📋</span>
+            Summarize this document
+
+          </button>
+
+
+          <button type="button" [disabled]="!pdfUpload()">
+
+            <span>🔍</span>
+            What are the key points?
+
+          </button>
+
+
+          <button type="button" [disabled]="!pdfUpload()">
+
+            <span>💡</span>
+            Explain this document simply
+
+          </button>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Input -->
+    <div class="chat-input-area">
+      <div class="chat-input">
+        <input type="text" (change)="onChange($event)" [disabled]="!pdfUpload()"
+          placeholder="Ask anything about this PDF..." />
+        <button type="button" class="send-btn" (click)="askQuestion()" [disabled]="!pdfUpload() || !enableSendButton"
+          title="Send">
+          Send
+        </button>
+      </div>
+      <div class="input-hint">
+        @if (pdfUpload()) {
+        Answers are based on the uploaded PDF
+        } @else {
+        Upload a PDF to enable chat
+        }
+      </div>
+    </div>
+
+  </div>
+
+</div>

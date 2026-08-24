@@ -1,21 +1,31 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input, SimpleChanges } from '@angular/core';
+import { Component, inject, input, OnChanges, OnInit, signal, SimpleChanges } from '@angular/core';
 import { ApiService } from '../../services/api-service';
+import { askResponse } from '../../models/api-data';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-chat',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './chat.html',
   styleUrl: './chat.css',
 })
-export class Chat {
+export class Chat implements OnInit, OnChanges {
   pdfUpload = input<boolean>();
   filePath = input<string>();
 
   question: string = '';
-  enableSendButton: boolean = false;
 
   apiService = inject(ApiService);
+
+  isLoading: boolean = false;
+  messages = signal<
+    {
+      question: string;
+      answer: string;
+      loading: boolean;
+    }[]
+  >([]);
 
   ngOnInit() {
     console.log(
@@ -26,46 +36,107 @@ export class Chat {
     );
   }
 
-  ngOnchanges(changes: SimpleChanges) {
-    if (changes['pdfUpload']) {
-      console.log('pdfUpload changed:', changes['pdfUpload'].currentValue);
-    }
-    if (changes['filePath']) {
-      console.log('filePath changed:', changes['filePath'].currentValue);
-    }
-  }
-
-  onChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.question = input.value;
-    console.log('Question changed:', this.question);
-    if (this.question.trim() === '') {
-      console.log('Question is empty. Disable Send button.');
-      this.enableSendButton = false;
-    } else {
-      console.log('Question is not empty. Enable Send button.');
-      this.enableSendButton = true;
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['pdfUpload'] || changes['filePath']) {
+      console.log(
+        'pdfUpload and filePath changed:',
+        changes['pdfUpload'].currentValue,
+        changes['filePath'].currentValue,
+      );
+      // Clear messages
+      this.messages.set([]);
     }
   }
 
-  askQuestion() {
-    if (!this.question.trim()) {
-      console.log('Question is empty. Not sending.');
+  onEnter(event: Event) {
+    event.preventDefault();
+
+    if (!this.question.trim() || !this.pdfUpload() || this.isLoading) {
       return;
     }
+
+    this.askQuestion();
+  }
+
+  askSuggestedQuestion(question: string) {
+    if (!this.pdfUpload() || this.isLoading) {
+      return;
+    }
+
+    this.askQuestion();
+  }
+
+  askQuestion(suggestedQuestion?: string) {
+    if (this.isLoading) {
+      return;
+    }
+
+    const questionToAsk = (suggestedQuestion ?? this.question).trim();
+
+    if (!questionToAsk) {
+      return;
+    }
+
     const filePath = this.filePath();
-    if (this.pdfUpload() === false || !filePath) {
-      console.log('PDF not uploaded or filePath is empty. Cannot send question.');
+
+    if (!this.pdfUpload() || !filePath) {
       return;
     }
 
-    console.log('Sending question:', this.question);
-    this.apiService.askQuestion(this.question, filePath).subscribe({
-      next: (response) => {
-        console.log('Received response:', response);
+    console.log('Sending question:', questionToAsk);
+
+    this.isLoading = true;
+
+    this.messages.update((messages) => [
+      ...messages,
+      {
+        question: questionToAsk,
+        answer: '',
+        loading: true,
       },
+    ]);
+
+    this.question = '';
+
+    const messageIndex = this.messages().length - 1;
+
+    this.apiService.askQuestion(questionToAsk, filePath).subscribe({
+      next: (response: askResponse) => {
+        const answer = response.answer;
+
+        if (response.success && answer) {
+          this.messages.update((messages) =>
+            messages.map((message, index) =>
+              index === messageIndex
+                ? {
+                    ...message,
+                    answer,
+                    loading: false,
+                  }
+                : message,
+            ),
+          );
+        }
+
+        this.isLoading = false;
+      },
+
       error: (error) => {
         console.error('Error sending question:', error);
+
+        this.messages.update((messages) =>
+          messages.map((message, index) =>
+            index === messageIndex
+              ? {
+                  ...message,
+                  answer: 'Sorry, I could not get an answer. Please try again.',
+                  loading: false,
+                }
+              : message,
+          ),
+        );
+
+        this.isLoading = false;
       },
     });
   }

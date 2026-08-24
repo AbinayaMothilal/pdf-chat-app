@@ -1,4 +1,3 @@
-//
 export interface uploadResponse {
   success: boolean;
   message: string;

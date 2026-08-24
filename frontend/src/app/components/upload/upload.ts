@@ -2,6 +2,7 @@ import { Component, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api-service';
 import { CommonModule } from '@angular/common';
+import { uploadResponse } from '../../models/api-data';
 
 @Component({
   selector: 'app-upload',
@@ -64,7 +65,7 @@ export class Upload {
     this.responseMessage = null;
 
     this.apiService.uploadPdf(this.selectedFile).subscribe({
-      next: (response) => {
+      next: (response: uploadResponse) => {
         this.pdfUploading = false;
         // this.pdfUploaded = true;
 

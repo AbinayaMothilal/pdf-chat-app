@@ -3,6 +3,7 @@ import { Component, inject, input, OnChanges, OnInit, signal, SimpleChanges } fr
 import { ApiService } from '../../services/api-service';
 import { askResponse } from '../../models/api-data';
 import { FormsModule } from '@angular/forms';
+import { marked } from 'marked';
 
 @Component({
   selector: 'app-chat',
@@ -28,21 +29,16 @@ export class Chat implements OnInit, OnChanges {
   >([]);
 
   ngOnInit() {
-    console.log(
-      'Chat component initialized with pdfUpload:',
-      this.pdfUpload,
-      'and filePath:',
-      this.filePath,
-    );
+    // console.log(
+    //   'Chat component initialized with pdfUpload:',
+    //   this.pdfUpload,
+    //   'and filePath:',
+    //   this.filePath,
+    // );
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['pdfUpload'] || changes['filePath']) {
-      console.log(
-        'pdfUpload and filePath changed:',
-        changes['pdfUpload'].currentValue,
-        changes['filePath'].currentValue,
-      );
       // Clear messages
       this.messages.set([]);
     }
@@ -83,8 +79,6 @@ export class Chat implements OnInit, OnChanges {
       return;
     }
 
-    console.log('Sending question:', questionToAsk);
-
     this.isLoading = true;
 
     this.messages.update((messages) => [
@@ -101,8 +95,9 @@ export class Chat implements OnInit, OnChanges {
     const messageIndex = this.messages().length - 1;
 
     this.apiService.askQuestion(questionToAsk, filePath).subscribe({
-      next: (response: askResponse) => {
-        const answer = response.answer;
+      next: async (response: askResponse) => {
+        const ans = response.answer;
+        const answer = ans ? await marked.parse(ans) : '';
 
         if (response.success && answer) {
           this.messages.update((messages) =>

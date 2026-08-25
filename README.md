@@ -1,3 +1,7 @@
+![Node.js](https://img.shields.io/badge/Node.js-18+-green)
+![Angular](https://img.shields.io/badge/Angular-18-red)
+![RAG](https://img.shields.io/badge/Architecture-RAG-blue)
+
 # 📄 PDF Chat App — AI-Powered PDF Assistant using RAG
 
 Upload a PDF, then ask questions about it in plain language. The app extracts the
@@ -16,6 +20,18 @@ Built with a clean, extensible Retrieval-Augmented Generation (RAG) pipeline.
 - Answers are grounded in the PDF — the model is instructed to say when an answer
   isn't in the document rather than making one up
 - Robust error handling for missing files, missing questions, and unknown file paths
+
+---
+
+## 📸 Demo
+
+## 📸 Demo
+
+![PDF Chat App ](./screenshots/demo-1.png)
+
+![PDF CHAT APP UPLOAD & ASK](./screenshots/demo-2.png)
+
+![PDF CHAT APP UPLOAD & ASK](./screenshots/demo-3.png)
 
 ---
 
@@ -178,7 +194,6 @@ Planned enhancements to take the project from MVP to production-grade:
   restarts and scale across sessions
 - 📚 **Multi-document support** — query across several files in one session
 - 💬 **Conversational memory** — follow-up questions with full chat history
-- 🔐 **Auth & access control** — user accounts and secure, per-user document spaces
 
 ---
 

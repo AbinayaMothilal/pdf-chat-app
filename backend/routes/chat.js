@@ -70,7 +70,6 @@ router.post("/ask", async (req, res) => {
       });
     }
     const result = await getAIAnswer(req.body.question, chunks);
-    console.log("Answer generated:", result);
 
     res.status(200).json({
       success: true,

@@ -16,12 +16,10 @@ export class App {
   pdfUploaded(event: { filepath: string }): void {
     this.pdfUpload = true;
     this.filePath = event.filepath;
-    console.log('PDF uploaded event received in App component:', event.filepath);
   }
 
   pdfRemoved(event: boolean): void {
     this.pdfUpload = false;
     this.filePath = '';
-    console.log('PDF removed event received in App component:', event);
   }
 }

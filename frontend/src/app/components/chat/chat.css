@@ -20,6 +20,7 @@
 
 .chat-header {
   height: 56px;
+  flex-shrink: 0;
 
   display: flex;
   align-items: center;
@@ -34,18 +35,20 @@
   display: flex;
   align-items: center;
   gap: 10px;
+
+  min-width: 0;
 }
 
 .chat-icon {
   width: 34px;
   height: 34px;
+  flex-shrink: 0;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   background: #eef2ff;
-
   border-radius: 8px;
 
   font-size: 16px;
@@ -77,32 +80,47 @@
 .chat-status {
   display: flex;
   align-items: center;
-
   gap: 6px;
+
+  flex-shrink: 0;
 
   padding: 5px 9px;
 
   border-radius: 20px;
 
-  background: #ecfdf5;
-
-  color: #047857;
-
   font-size: 11px;
+}
+
+.chat-status.ready {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.chat-status.disabled {
+  background: #f3f4f6;
+  color: #6b7280;
 }
 
 .status-dot {
   width: 6px;
   height: 6px;
+  flex-shrink: 0;
 
   border-radius: 50%;
 
   background: #10b981;
 }
 
+.chat-status.disabled .status-dot {
+  background: #9ca3af;
+}
+
+/* ================================
+   CHAT BODY
+================================ */
+
 .chat-body {
   flex: 1;
-
   min-height: 0;
 
   display: flex;
@@ -115,65 +133,16 @@
   opacity: 0.55;
 }
 
-/* Disabled suggested questions */
-
-.suggestions button:disabled {
-  cursor: not-allowed;
-
-  background: #f9fafb;
-
-  color: #9ca3af;
-
-  border-color: #e5e7eb;
-}
-
-
-/* Disabled input */
-
-.chat-input input:disabled {
-  cursor: not-allowed;
-
-  background: #f9fafb;
-}
-
-
-/* Disabled send button */
-
-.send-btn:disabled {
-  opacity: 0.45;
-
-  cursor: not-allowed;
-}
-
-
 /* ================================
-   STATUS
-================================ */
-
-.chat-status.ready {
-  background: #ecfdf5;
-  color: #047857;
-}
-
-.chat-status.disabled {
-  background: #f3f4f6;
-  color: #6b7280;
-}
-
-.chat-status.disabled .status-dot {
-  background: #9ca3af;
-}
-
-/* ================================
-   MESSAGES
+   MESSAGES CONTAINER
 ================================ */
 
 .messages {
   flex: 1;
-
   min-height: 0;
 
   overflow-y: auto;
+  overflow-x: hidden;
 
   padding: 20px;
 }
@@ -183,11 +152,10 @@
 ================================ */
 
 .empty-chat {
-  height: 100%;
+  min-height: 100%;
 
   display: flex;
   flex-direction: column;
-
   align-items: center;
   justify-content: center;
 
@@ -199,6 +167,7 @@
 .empty-chat-icon {
   width: 52px;
   height: 52px;
+  flex-shrink: 0;
 
   display: flex;
   align-items: center;
@@ -233,50 +202,132 @@
   color: #9ca3af;
 }
 
-/* ===============================
-   MESSAGES LIST
+/* ================================
+   MESSAGE LIST
 ================================ */
 
 .message-list {
-  height: 100%;
+  width: 100%;
+
   display: flex;
   flex-direction: column;
-  padding: 20px;
+
   gap: 16px;
 }
 
-/* ===============================
-   USER MESSAGE
+/* ================================
+   USER / ASSISTANT ROW
 ================================ */
 
-.user-message {
+.user-message,
+.assistant-message {
+  width: 100%;
+  min-width: 0;
+
   display: flex;
+}
+
+.user-message {
   justify-content: flex-end;
 }
 
-.user-message .message-bubble {
-  max-width: 75%;
-  padding: 10px 14px;
-  border-radius: 12px 12px 2px 12px;
-  background: #6366f1;
-  color: white;
-}
-
-/* ===============================
-   ASSISTANT MESSAGE
-================================ */
-
 .assistant-message {
-  display: flex;
   justify-content: flex-start;
 }
 
+/* ================================
+   MESSAGE BUBBLE
+================================ */
+
+.user-message .message-bubble,
 .assistant-message .message-bubble {
+  min-width: 0;
   max-width: 75%;
+
   padding: 10px 14px;
-  border-radius: 12px 12px 12px 2px;
+
+  font-size: 13px;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* ================================
+   USER BUBBLE
+================================ */
+
+.user-message .message-bubble {
+  background: #6366f1;
+  color: #ffffff;
+
+  border-radius: 12px 12px 2px 12px;
+}
+
+/* ================================
+   ASSISTANT BUBBLE
+================================ */
+
+.assistant-message .message-bubble {
   background: #f1f5f9;
   color: #1e293b;
+
+  border-radius: 12px 12px 12px 2px;
+}
+
+/* ================================
+   MARKDOWN CONTENT
+================================ */
+
+.message-bubble>div {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.message-bubble p {
+  margin: 0 0 8px;
+}
+
+.message-bubble p:last-child {
+  margin-bottom: 0;
+}
+
+.message-bubble ul,
+.message-bubble ol {
+  max-width: 100%;
+
+  margin: 6px 0;
+  padding-left: 20px;
+}
+
+.message-bubble li {
+  margin-bottom: 4px;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.message-bubble a {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.message-bubble pre {
+  max-width: 100%;
+
+  overflow-x: auto;
+
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.message-bubble code {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* ================================
@@ -303,15 +354,12 @@
   padding: 10px 12px;
 
   border: 1px solid #e5e7eb;
-
   border-radius: 9px;
 
   background: #ffffff;
-
   color: #4b5563;
 
   font-size: 12px;
-
   text-align: left;
 
   cursor: pointer;
@@ -323,7 +371,6 @@
   border-color: #c7d2fe;
 
   background: #f8f7ff;
-
   color: #4338ca;
 }
 
@@ -331,66 +378,13 @@
   font-size: 14px;
 }
 
-/* ================================
-   CHAT MESSAGE
-================================ */
-
-.message {
-  display: flex;
-
-  gap: 9px;
-
-  max-width: 90%;
-
-  margin-bottom: 18px;
-}
-
-.message-avatar {
-  width: 28px;
-  height: 28px;
-
-  flex-shrink: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 8px;
-
-  background: #eef2ff;
-
-  color: #4f46e5;
-
-  font-size: 9px;
-  font-weight: 600;
-}
-
-.message-content {
-  padding: 9px 12px;
-
-  border-radius: 10px;
-
-  font-size: 13px;
-
-  line-height: 1.5;
-
-  color: #374151;
+.suggestions button:disabled {
+  cursor: not-allowed;
 
   background: #f9fafb;
-}
+  color: #9ca3af;
 
-/* USER */
-
-.user-message {
-  margin-left: auto;
-
-  flex-direction: row-reverse;
-}
-
-.user-message .message-content {
-  background: #4f46e5;
-
-  color: #ffffff;
+  border-color: #e5e7eb;
 }
 
 /* ================================
@@ -398,6 +392,8 @@
 ================================ */
 
 .chat-input-area {
+  flex-shrink: 0;
+
   padding: 12px 14px;
 
   border-top: 1px solid #e5e7eb;
@@ -406,13 +402,14 @@
 }
 
 .chat-input {
+  width: 100%;
+
   display: flex;
   align-items: center;
 
   padding: 4px;
 
   border: 1px solid #d1d5db;
-
   border-radius: 10px;
 
   background: #ffffff;
@@ -428,17 +425,14 @@
 
 .chat-input input {
   flex: 1;
-
   min-width: 0;
 
   padding: 8px;
 
   border: none;
-
   outline: none;
 
   background: transparent;
-
   color: #374151;
 
   font-size: 13px;
@@ -448,6 +442,12 @@
   color: #9ca3af;
 }
 
+.chat-input input:disabled {
+  cursor: not-allowed;
+
+  background: #f9fafb;
+}
+
 /* ================================
    SEND BUTTON
 ================================ */
@@ -455,17 +455,16 @@
 .send-btn {
   width: 60px;
   height: 40px;
+  flex-shrink: 0;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   border: none;
-
   border-radius: 7px;
 
   background: #4f46e5;
-
   color: #ffffff;
 
   font-size: 15px;
@@ -477,6 +476,12 @@
 
 .send-btn:hover {
   background: #4338ca;
+}
+
+.send-btn:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
 }
 
 /* ================================
@@ -493,4 +498,50 @@
   font-size: 10px;
 
   color: #9ca3af;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 700px) {
+  .messages {
+    padding: 12px;
+  }
+
+  .user-message .message-bubble,
+  .assistant-message .message-bubble {
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 450px) {
+  .chat-header {
+    padding: 0 10px;
+  }
+
+  .chat-title {
+    gap: 7px;
+  }
+
+  .chat-title span {
+    display: none;
+  }
+
+  .chat-status {
+    padding: 4px 7px;
+  }
+
+  .messages {
+    padding: 8px;
+  }
+
+  .user-message .message-bubble,
+  .assistant-message .message-bubble {
+    max-width: 95%;
+  }
+
+  .chat-input-area {
+    padding: 10px;
+  }
 }

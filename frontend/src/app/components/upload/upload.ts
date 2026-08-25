@@ -50,8 +50,6 @@ export class Upload {
     // Valid PDF
     this.selectedFile = file;
     this.responseMessage = null;
-
-    console.log('Selected PDF:', file);
   }
 
   uploadPdf(): void {
@@ -76,8 +74,6 @@ export class Upload {
         const filePath = response.filePath || '';
 
         this.pdfUploadedEvent.emit({ filepath: filePath });
-
-        console.log('PDF uploaded successfully:', response);
       },
 
       error: (error) => {
